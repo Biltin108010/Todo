@@ -1,5 +1,5 @@
 {
-  "homepage": "https://your-github-username.github.io/your-repo-name",
+  "homepage": "https://biltin108010.github.io/Todo/",
   "name": "my-todo-app",
   "private": true,
   "version": "0.0.0",
@@ -10,8 +10,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "predeploy": "npm run build",
-  "deploy": "gh-pages -d build"
-
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "react": "^19.0.0",
