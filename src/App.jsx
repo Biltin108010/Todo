@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import "./App.css";
+import { getTasks, addTask, updateTask, deleteTask } from "./api";
 
 export default function App() {
   const [tasks, setTasks] = useState([]);
@@ -7,26 +8,54 @@ export default function App() {
   const [editId, setEditId] = useState(null);
   const [editText, setEditText] = useState("");
   const [filter, setFilter] = useState("all");
+  const [searchTerm, setSearchTerm] = useState("");
   const [darkMode, setDarkMode] = useState(
     localStorage.getItem("darkMode") === "true"
   );
 
   useEffect(() => {
     localStorage.setItem("darkMode", darkMode);
+    if (darkMode) {
+      document.body.classList.add("dark-mode");
+    } else {
+      document.body.classList.remove("dark-mode");
+    }
   }, [darkMode]);
+  
 
-  const addTask = () => {
-    if (newTask.trim() === "") return;
-    setTasks([...tasks, { id: Date.now(), text: newTask, completed: false }]);
-    setNewTask("");
+
+  useEffect(() => {
+    fetchTasks();
+  }, [searchTerm]);
+
+  const fetchTasks = async () => {
+    const data = await getTasks(searchTerm);
+    setTasks(data);
   };
 
-  const toggleComplete = (id) => {
-    setTasks(
-      tasks.map((task) =>
-        task.id === id ? { ...task, completed: !task.completed } : task
-      )
-    );
+  const handleAddTask = async () => {
+    if (newTask.trim() === "") return;
+    const newTaskData = { title: newTask, description: "", completed: false };
+    await addTask(newTaskData);
+    setNewTask("");
+    fetchTasks(); // Refresh task list
+  };
+
+  const toggleComplete = async (id, completed) => {
+
+    const task = tasks.find((task) => task.id === id);
+    
+    if (task) {
+
+      const updatedTask = {
+        ...task,  
+        completed: !completed,
+      };
+  
+
+      await updateTask(id, updatedTask);
+      fetchTasks();
+    }
   };
 
   const startEditing = (id, text) => {
@@ -34,15 +63,15 @@ export default function App() {
     setEditText(text);
   };
 
-  const saveEdit = (id) => {
-    setTasks(
-      tasks.map((task) => (task.id === id ? { ...task, text: editText } : task))
-    );
+  const saveEdit = async (id) => {
+    await updateTask(id, { title: editText });
     setEditId(null);
+    fetchTasks();
   };
 
-  const deleteTask = (id) => {
-    setTasks(tasks.filter((task) => task.id !== id));
+  const handleDeleteTask = async (id) => {
+    await deleteTask(id);
+    fetchTasks();
   };
 
   const filteredTasks = tasks.filter((task) => {
@@ -58,7 +87,20 @@ export default function App() {
         <button onClick={() => setDarkMode(!darkMode)}>
           {darkMode ? "☀️ Light Mode" : "🌙 Dark Mode"}
         </button>
-        <button onClick={() => window.location.href = "https://biltin108010.github.io/Portfolio/"}>Go back home</button>
+        <button onClick={() => (window.location.href = "https://biltin108010.github.io/Portfolio/")}>
+          Go back home
+        </button>
+        
+        {/* Search bar */}
+        <div className="search-bar">
+          <input
+            type="text"
+            placeholder="Search tasks..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+
         <div>
           <input
             type="text"
@@ -66,7 +108,7 @@ export default function App() {
             onChange={(e) => setNewTask(e.target.value)}
             placeholder="Add a new task"
           />
-          <button onClick={addTask}>Add Task</button>
+          <button onClick={handleAddTask}>Add Task</button>
         </div>
         <div>
           <button onClick={() => setFilter("all")}>All</button>
@@ -90,12 +132,12 @@ export default function App() {
                   <input
                     type="checkbox"
                     checked={task.completed}
-                    onChange={() => toggleComplete(task.id)}
+                    onChange={() => toggleComplete(task.id, task.completed)}
                   />
-                  <span>{task.text}</span>
+                  <span>{task.title}</span>
                   <div className="task-actions">
-                    <button onClick={() => startEditing(task.id, task.text)}>Edit</button>
-                    <button onClick={() => deleteTask(task.id)}>Delete</button>
+                    <button onClick={() => startEditing(task.id, task.title)}>Edit</button>
+                    <button onClick={() => handleDeleteTask(task.id)}>Delete</button>
                   </div>
                 </>
               )}
@@ -105,7 +147,6 @@ export default function App() {
       </div>
       <div className="footer">
         <p>&copy; 2025 John Rhey R. Villanueva | All Rights Reserved</p>
-
       </div>
     </div>
   );
