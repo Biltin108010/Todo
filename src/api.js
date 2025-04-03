@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = process.env_REACT-APP_API_URL || "http://127.0.0.1:8000/api/tasks/";
+const API_URL = "https://todo-backend-6osi.onrender.com/api/tasks/";
 
 export const getTasks = async (search = "") => {
   try {
