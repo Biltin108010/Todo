@@ -3,7 +3,13 @@ import axios from "axios";
 const API_URL = "https://todo-backend-6osi.onrender.com/api/tasks/";
 
 
-const token = "207995070b225e8fa4dbae99e83b76e2a4f532c8"; 
+const token = "4c2f60c892c1f8af186f3f581c97d03c9fe01435"; 
+
+axios.get("https://todo-backend-6osi.onrender.com/api/tasks/", {
+  headers: {
+    "Authorization": `Token ${token}`,
+  }
+})
 
 // Fetching tasks with authentication
 export const getTasks = async (search = "") => {
