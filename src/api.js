@@ -2,6 +2,8 @@ import axios from "axios";
 
 const API_URL = "https://todo-backend-6osi.onrender.com/api/tasks/";
 
+const token = "4c2f60c892c1f8af186f3f581c97d03c9fe01435";
+
 export const getTasks = async (search = "") => {
   try {
     const response = await axios.get(`${API_URL}?search=${search}`);
