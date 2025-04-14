@@ -2,7 +2,7 @@ import axios from "axios";
 
 const API_URL = "https://todo-backend-6osi.onrender.com/api/tasks/";
 
-// Replace with your actual token
+
 const token = "4c2f60c892c1f8af186f3f581c97d03c9fe01435"; 
 
 // Fetching tasks with authentication
